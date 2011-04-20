@@ -11,6 +11,7 @@
 // Helper functions
 //
 
+(function() {
 var qq = qq || {};
 
 /**
@@ -1245,3 +1246,5 @@ qq.extend(qq.UploadHandlerXhr.prototype, {
         }
     }
 });
+window.qq = qq;
+})();
