@@ -1248,3 +1248,37 @@ qq.extend(qq.UploadHandlerXhr.prototype, {
 });
 window.qq = qq;
 })();
+
+// jQuery UI integration
+if (window.jQuery !== undefined && window.jQuery.ui !== undefined) {
+	(function($) {
+		$.widget('qq.FileUploaderBasic', {
+			options: {},
+			_create: function() {
+				var obj = $.extend({
+					element: this.element[0]
+				}, this.options);
+				this.qq = new qq.FileUploaderBasic(obj);
+			},
+			destroy: function() {
+				$.Widget.prototype.destroy.apply(this, arguments);
+				this.qq = null;
+			},
+			setParams: function(params) {
+				return this.qq.setParams(params);
+			},
+			getInProgress: function() {
+				return this.qq.getInProgress();
+			}
+		});
+		$.widget('qq.FileUploader', $.qq.FileUploaderBasic, {
+			options: {},
+			_create: function() {
+				var obj = $.extend({
+					element: this.element[0]
+				}, this.options);
+				this.qq = new qq.FileUploader(obj);
+			}
+		});
+	})(jQuery);
+}
