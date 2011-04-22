@@ -587,6 +587,9 @@ qq.extend(qq.FileUploader.prototype, {
                 dropArea.style.display = 'none';                                            
             }
         });                
+		qq.attach(dropArea, 'click', function(e){
+			dropArea.style.display = 'none';
+		});
     },
     _onSubmit: function(id, fileName){
         qq.FileUploaderBasic.prototype._onSubmit.apply(this, arguments);
