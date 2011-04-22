@@ -487,7 +487,7 @@ qq.FileUploader = function(o){
                 
         template: '<div class="qq-uploader">' + 
                 '<div class="qq-upload-drop-area"><span>Drop files here to upload</span></div>' +
-                '<div class="qq-upload-button">Upload a file</div>' +
+                '<div class="qq-upload-button"><span>Upload a file</span></div>' +
                 '<ul class="qq-upload-list"></ul>' + 
              '</div>',
 
@@ -1253,7 +1253,9 @@ window.qq = qq;
 if (window.jQuery !== undefined && window.jQuery.ui !== undefined) {
 	(function($) {
 		$.widget('qq.FileUploaderBasic', {
-			options: {},
+			options: {
+				uibutton: true
+			},
 			_create: function() {
 				var obj = $.extend({
 					element: this.element[0]
@@ -1278,6 +1280,20 @@ if (window.jQuery !== undefined && window.jQuery.ui !== undefined) {
 					element: this.element[0]
 				}, this.options);
 				this.qq = new qq.FileUploader(obj);
+				this._uiButton();
+			},
+			_uiButton: function() {
+				if (this.options.uibutton) {
+					this.element
+						.find('.qq-upload-button')
+						.addClass('ui-button ui-widget ui-state-default ui-button-text-only ui-corner-all')
+						.find('span').addClass('ui-button-text').end()
+						.removeClass('qq-upload-button')
+						.hover(this._btnHover);
+				}
+			},
+			_btnHover: function() {
+				$(this).toggleClass('ui-state-hover');
 			}
 		});
 	})(jQuery);
