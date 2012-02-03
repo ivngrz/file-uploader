@@ -111,6 +111,21 @@ qq.toElement = (function(){
     };
 })();
 
+/**
+ * Decodes HTML encoded string
+ */
+qq.htmlDec = (function(){
+    var textarea = document.createElement('textarea');
+    return function(html){
+        var decoded = html;
+        try {
+            textarea.innerHTML = html;
+            decoded = textarea.value;
+        } catch(e) {}
+        return decoded;
+    };
+})();
+
 //
 // Node properties and attributes
 
@@ -1050,6 +1065,7 @@ qq.extend(qq.UploadHandlerForm.prototype, {
             callback();
         });
     },
+    RE_WRAPTAG: /^<([^>\s]+)(?:[^>]*)>([\s\S]*)<\/\1>$/,
     /**
      * Returns json object received by iframe from server.
      */
@@ -1060,9 +1076,14 @@ qq.extend(qq.UploadHandlerForm.prototype, {
         
         this.log("converting iframe's innerHTML to JSON");
         this.log("innerHTML = " + doc.body.innerHTML);
-                        
+
+        //IE wraps plain text responses in <pre> tag
+        var jsonString = doc.body.innerHTML.replace(this.RE_WRAPTAG, '$2');
+        //Certain characters (inside <pre>) may be encoded as HTML entities (&gt;)
+        jsonString = qq.htmlDec(jsonString);
+
         try {
-            response = eval("(" + doc.body.innerHTML + ")");
+            response = eval("(" + jsonString + ")");
         } catch(err){
             response = {};
         }        
