@@ -1065,7 +1065,6 @@ qq.extend(qq.UploadHandlerForm.prototype, {
             callback();
         });
     },
-    RE_WRAPTAG: /^<([^>\s]+)(?:[^>]*)>([\s\S]*)<\/\1>$/,
     /**
      * Returns json object received by iframe from server.
      */
@@ -1077,10 +1076,12 @@ qq.extend(qq.UploadHandlerForm.prototype, {
         this.log("converting iframe's innerHTML to JSON");
         this.log("innerHTML = " + doc.body.innerHTML);
 
+        var jsonString = doc.body.innerHTML;
         //IE wraps plain text responses in <pre> tag
-        var jsonString = doc.body.innerHTML.replace(this.RE_WRAPTAG, '$2');
-        //Certain characters (inside <pre>) may be encoded as HTML entities (&gt;)
-        jsonString = qq.htmlDec(jsonString);
+        if (jsonString.slice(0, 5).toLowerCase() == '<pre>' && jsonString.slice(-6).toLowerCase() == '</pre>') {
+          //Characters in <pre> may be encoded as HTML entities (e.g. &amp;)
+          jsonString = qq.htmlDec(jsonString.slice(5, -6));
+        }
 
         try {
             response = eval("(" + jsonString + ")");
